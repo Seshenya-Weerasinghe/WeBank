@@ -6,7 +6,6 @@ import com.example.WeBank.repository.AccountRepository;
 import com.example.WeBank.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -53,7 +52,7 @@ public class AccountService {
         }
 
         // Calculate transaction fees based on account transactions
-        List<Transaction> transactions = transactionRepository.findAll();
+        List<Transaction> transactions = transactionRepository.findByAccountNumber(account.getAccountNumber());
         for (Transaction transaction : transactions) {
             switch (transaction.getTransactionType()) {
                 case "Deposit" -> {

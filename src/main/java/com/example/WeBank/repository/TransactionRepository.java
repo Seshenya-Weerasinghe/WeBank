@@ -7,4 +7,5 @@ import java.util.Date;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
+    List<Transaction> findByAccountNumber(String accountNumber);
 }

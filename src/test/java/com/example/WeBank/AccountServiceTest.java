@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,7 +64,7 @@ public class AccountServiceTest {
 //    }
 
     @Test
-    public void testCalculateMonthlyCost() {
+    public void testCalculateAccountCost() {
         Branch sampleBranch = new Branch(1, "Sample Branch");
         Account sampleAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "Savings");
 
@@ -86,7 +85,7 @@ public class AccountServiceTest {
         List<Transaction> transactions = List.of(depositTransaction, withdrawalTransaction, transferTransaction);
 
         // Mock the transactionRepository
-        when(transactionRepository.findAll()).thenReturn(transactions);
+        when(transactionRepository.findByAccountNumber(sampleAccount.getAccountNumber())).thenReturn(transactions);
 
         double monthlyCost = accountService.calculateAccountCost(sampleAccount);
 
