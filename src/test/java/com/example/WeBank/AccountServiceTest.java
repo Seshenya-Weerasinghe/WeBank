@@ -54,15 +54,6 @@ public class AccountServiceTest {
         verify(accountRepository, times(1)).findByAccountNumber("AC123456789");
     }
 
-//    @Test
-//    public void testCreateAccountWithUniqueAccountNumber() {
-//        Branch sampleBranch = new Branch(1, "Sample Branch");
-//        Account sampleAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "savings");
-//
-//        when(accountRepository.findByAccountNumber("AC123456789")).thenReturn(null);
-//
-//    }
-
     @Test
     public void testCalculateAccountCost() {
         Branch sampleBranch = new Branch(1, "Sample Branch");
@@ -91,4 +82,36 @@ public class AccountServiceTest {
 
         assertEquals(15.0, monthlyCost);
     }
+
+    @Test
+    public void testConvertCurrency() {
+
+        // Test conversion from EUR to USD
+        double amountInEURToUSD = accountService.convertCurrency(100.0, "EUR", "USD");
+        assertEquals(118.0, amountInEURToUSD, 0.01);
+
+        // Test conversion from EUR to GBP
+        double amountInEURToGBP = accountService.convertCurrency(100.0, "EUR", "GBP");
+        assertEquals(85.0, amountInEURToGBP, 0.01);
+
+        // Test conversion from an invalid currency code
+        assertThrows(IllegalArgumentException.class,
+                () -> accountService.convertCurrency(100.0, "EUR", "INVALID"));
+    }
+
+    @Test
+    public void testCalculateCompoundInterest() {
+        double initialAmount = 1000.0;
+        double interestRate = 5.0;
+        int compoundingFrequency = 12;
+        int years = 3;
+
+        double compoundInterest = accountService.calculateCompoundInterest(initialAmount, interestRate, compoundingFrequency, years);
+
+        // Expected compound interest calculated using the formula A = P(1 + r/n)^(nt) - P
+        double expectedCompoundInterest = 12.576;
+
+        assertEquals(expectedCompoundInterest, compoundInterest, 0.01);
+    }
+
 }
