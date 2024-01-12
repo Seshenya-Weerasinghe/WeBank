@@ -6,11 +6,13 @@ import com.example.WeBank.model.Transaction;
 import com.example.WeBank.repository.AccountRepository;
 import com.example.WeBank.repository.TransactionRepository;
 import com.example.WeBank.service.AccountService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,33 +30,11 @@ public class AccountServiceTest {
     @InjectMocks
     private AccountService accountService;
 
-    @Test
-    public void testCalculateAccountCost() {
-        Branch sampleBranch = new Branch(1, "Sample Branch");
-        Account sampleAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "Savings");
+    private Branch sampleBranch;
 
-        // Create sample transactions for the account
-        Transaction depositTransaction = new Transaction();
-        depositTransaction.setTransactionType("Deposit");
-        depositTransaction.setTransactionAmount(1000.0); // $1000 deposit
-
-        Transaction withdrawalTransaction = new Transaction();
-        withdrawalTransaction.setTransactionType("Withdrawal");
-        withdrawalTransaction.setTransactionAmount(500.0); // $500 withdrawal
-
-        Transaction transferTransaction = new Transaction();
-        transferTransaction.setTransactionType("Transfer");
-        transferTransaction.setTransactionAmount(100.0); // $100 transfer
-
-        // Add transactions to a list
-        List<Transaction> transactions = List.of(depositTransaction, withdrawalTransaction, transferTransaction);
-
-        // Mock the transactionRepository
-        when(transactionRepository.findByAccountNumber(sampleAccount.getAccountNumber())).thenReturn(transactions);
-
-        double monthlyCost = accountService.calculateAccountCost(sampleAccount);
-
-        assertEquals(15.0, monthlyCost);
+    @BeforeEach
+    public void setUp(){
+        sampleBranch = new Branch(1, "Sample Branch");
     }
 
     @Test
@@ -88,4 +68,63 @@ public class AccountServiceTest {
         assertEquals(expectedCompoundInterest, compoundInterest, 0.01);
     }
 
+    @Test
+    public void test_CalculateAccountCost_ForCheckingAccountWithNoTransactions() {
+        Account checkingAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "Checking");
+        when(transactionRepository.findByAccountNumber(anyString())).thenReturn(Arrays.asList());
+
+        double cost = accountService.calculateAccountCost(checkingAccount);
+        assertEquals(5.0, cost);
+    }
+
+    @Test
+    public void test_CalculateAccountCost_ForSavingsAccountWithDepositTransactions() {
+        Account savingsAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "Savings");
+        Transaction depositTransaction = new Transaction();
+        depositTransaction.setTransactionType("Deposit");
+        depositTransaction.setTransactionAmount(100.0); // $100 deposit
+        when(transactionRepository.findByAccountNumber(anyString())).thenReturn(Arrays.asList(depositTransaction));
+
+        double cost = accountService.calculateAccountCost(savingsAccount);
+        double expectedCost = 2.0 + 100.0 * 0.01; // 2.0 is the base cost, and 1% of 100 is the deposit fee
+        assertEquals(expectedCost, cost);
+    }
+
+    @Test
+    public void test_CalculateAccountCost_ForInvestmentAccountWithWithdrawalTransactions() {
+        Account investmentAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "Investment");
+
+        Transaction withdrawalTransaction = new Transaction();
+        withdrawalTransaction.setTransactionType("Withdrawal");
+        withdrawalTransaction.setTransactionAmount(100.0); // $100 withdrawal
+
+        when(transactionRepository.findByAccountNumber(anyString())).thenReturn(Arrays.asList(withdrawalTransaction));
+
+        double cost = accountService.calculateAccountCost(investmentAccount);
+        double expectedCost = 10.0 + 2.0; // 10.0 is the base cost, and 2.0 is the withdrawal fee
+        assertEquals(expectedCost, cost);
+    }
+
+    @Test
+    public void test_CalculateAccountCost_ForCheckingAccountWithMixedTransactions() {
+        Account checkingAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "Checking");
+
+        Transaction depositTransaction = new Transaction();
+        depositTransaction.setTransactionType("Deposit");
+        depositTransaction.setTransactionAmount(100.0); // $100 deposit
+
+        Transaction withdrawalTransaction = new Transaction();
+        withdrawalTransaction.setTransactionType("Withdrawal");
+        withdrawalTransaction.setTransactionAmount(100.0); // $100 withdrawal
+
+        Transaction transferTransaction = new Transaction();
+        transferTransaction.setTransactionType("Transfer");
+        transferTransaction.setTransactionAmount(100.0); // $100 transfer
+
+        when(transactionRepository.findByAccountNumber(anyString())).thenReturn(Arrays.asList(depositTransaction, withdrawalTransaction, transferTransaction));
+
+        double cost = accountService.calculateAccountCost(checkingAccount);
+        double expectedCost = 5.0 + 100.0 * 0.01 + 2.0 + 1.0; // 5.0 is the base cost, 1% of 100 is the deposit fee, 2.0 is the withdrawal fee, and 1.0 is the transfer fee
+        assertEquals(expectedCost, cost);
+    }
 }
