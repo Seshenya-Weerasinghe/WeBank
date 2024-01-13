@@ -38,23 +38,57 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void testConvertCurrency() {
+    public void testCreateAccount() {
+        Account sampleAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "savings");
+
+        when(accountRepository.save(sampleAccount)).thenReturn(sampleAccount);
+
+        Account createdAccount = accountService.createAccount(sampleAccount);
+
+        assertEquals(sampleAccount, createdAccount);
+        verify(accountRepository, times(1)).save(sampleAccount);
+    }
+
+    @Test
+    public void testFindByAccountNumber() {
+        Account sampleAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "savings");
+
+        when(accountRepository.findByAccountNumber("AC123456789")).thenReturn(sampleAccount);
+
+        Account foundAccount = accountService.findByAccountNumber("AC123456789");
+
+        assertEquals(sampleAccount, foundAccount);
+        verify(accountRepository, times(1)).findByAccountNumber("AC123456789");
+    }
+
+    @Test
+    public void test_ConvertCurrency_ToUSD() {
 
         // Test conversion from EUR to USD
         double amountInEURToUSD = accountService.convertCurrency(100.0, "EUR", "USD");
         assertEquals(118.0, amountInEURToUSD, 0.01);
 
+    }
+
+    @Test
+    public void test_ConvertCurrency_ToGBP() {
+
         // Test conversion from EUR to GBP
         double amountInEURToGBP = accountService.convertCurrency(100.0, "EUR", "GBP");
         assertEquals(85.0, amountInEURToGBP, 0.01);
 
-        // Test conversion from an invalid currency code
+    }
+
+    @Test
+    public void test_ConvertCurrency_ToInvalidCurrencyType() {
+
+        // Test conversion to an invalid currency code
         assertThrows(IllegalArgumentException.class,
                 () -> accountService.convertCurrency(100.0, "EUR", "INVALID"));
     }
 
     @Test
-    public void testCalculateCompoundInterest() {
+    public void test_CalculateCompoundInterest_WithInitialAmount() {
         double initialAmount = 1000.0;
         double interestRate = 5.0;
         int compoundingFrequency = 12;
@@ -66,6 +100,18 @@ public class AccountServiceTest {
         double expectedCompoundInterest = 12.576;
 
         assertEquals(expectedCompoundInterest, compoundInterest, 0.01);
+    }
+
+    @Test
+    public void test_CalculateCompoundInterest_WithNoInitialAmount() {
+        double initialAmount = 0.0;
+        double interestRate = 5.0;
+        int compoundingFrequency = 12;
+        int years = 3;
+
+        // Test when initial amount is 0.0
+        assertThrows(IllegalArgumentException.class,
+                () -> accountService.calculateCompoundInterest(initialAmount, interestRate, compoundingFrequency, years));
     }
 
     @Test
