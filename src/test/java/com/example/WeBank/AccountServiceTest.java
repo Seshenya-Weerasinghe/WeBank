@@ -128,7 +128,7 @@ public class AccountServiceTest {
         Account savingsAccount = new Account(1, "AC123456789", 1000.0, sampleBranch, "Savings");
         Transaction depositTransaction = new Transaction();
         depositTransaction.setTransactionType("Deposit");
-        depositTransaction.setTransactionAmount(100.0); // $100 deposit
+        depositTransaction.setTransactionAmount(100.0); // €100 deposit
         when(transactionRepository.findByAccountNumber(anyString())).thenReturn(Arrays.asList(depositTransaction));
 
         double cost = accountService.calculateAccountCost(savingsAccount);
@@ -142,7 +142,7 @@ public class AccountServiceTest {
 
         Transaction withdrawalTransaction = new Transaction();
         withdrawalTransaction.setTransactionType("Withdrawal");
-        withdrawalTransaction.setTransactionAmount(100.0); // $100 withdrawal
+        withdrawalTransaction.setTransactionAmount(100.0); // €100 withdrawal
 
         when(transactionRepository.findByAccountNumber(anyString())).thenReturn(Arrays.asList(withdrawalTransaction));
 
@@ -157,15 +157,15 @@ public class AccountServiceTest {
 
         Transaction depositTransaction = new Transaction();
         depositTransaction.setTransactionType("Deposit");
-        depositTransaction.setTransactionAmount(100.0); // $100 deposit
+        depositTransaction.setTransactionAmount(100.0); // €100 deposit
 
         Transaction withdrawalTransaction = new Transaction();
         withdrawalTransaction.setTransactionType("Withdrawal");
-        withdrawalTransaction.setTransactionAmount(100.0); // $100 withdrawal
+        withdrawalTransaction.setTransactionAmount(100.0); // €100 withdrawal
 
         Transaction transferTransaction = new Transaction();
         transferTransaction.setTransactionType("Transfer");
-        transferTransaction.setTransactionAmount(100.0); // $100 transfer
+        transferTransaction.setTransactionAmount(100.0); // €100 transfer
 
         when(transactionRepository.findByAccountNumber(anyString())).thenReturn(Arrays.asList(depositTransaction, withdrawalTransaction, transferTransaction));
 

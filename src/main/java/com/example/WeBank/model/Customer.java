@@ -36,11 +36,11 @@ public class Customer {
     @Column(name = "credit_score")
     private Integer creditScore;
 
-    // Annual income is in dollars.
+    // Annual income is in euros.
     @Column(name = "annual_income")
     private Double annualIncome;
 
-    // Debt is in dollars.
+    // Debt is in euros.
     @Column(name = "debt")
     private Double debt;
 

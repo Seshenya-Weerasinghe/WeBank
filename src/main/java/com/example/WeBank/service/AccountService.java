@@ -51,8 +51,8 @@ public class AccountService {
     public double calculateAccountCost(Account account){
         double monthlyCost = 0.0;
         double DEPOSIT_FEE_PERCENTAGE = 0.01; // 1% deposit fee
-        double WITHDRAWAL_FEE_FIXED = 2.0; // $2 fixed withdrawal fee
-        double TRANSFER_FEE_FIXED = 1.0; // $1 fixed transfer fee
+        double WITHDRAWAL_FEE_FIXED = 2.0; // €2 fixed withdrawal fee
+        double TRANSFER_FEE_FIXED = 1.0; // €1 fixed transfer fee
 
         if (account.getAccountType().equals("Checking")) {
             monthlyCost = 5.0;
