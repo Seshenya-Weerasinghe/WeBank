@@ -30,7 +30,7 @@ public class CustomerServiceTest {
         Branch sampleBranch = new Branch(1, "Sample Branch");
         Account sampleAccount = new Account(1, "123456781234",1000.0, sampleBranch, "savings");
 
-        CustomerRequestBody customerRequestBody = new CustomerRequestBody(1, "John", "Doe", LocalDate.of(1990, 1, 1), "1234567890", "123456781234");
+        CustomerRequestBody customerRequestBody = new CustomerRequestBody(1, "John", "Doe", LocalDate.of(1990, 1, 1), "1234567890", "123456781234", 900, 70000.0, 10000.0, 5);
 
         Customer expectedCustomer = customerRequestBody.getCustomerFromCustomerRequest(sampleAccount);
 

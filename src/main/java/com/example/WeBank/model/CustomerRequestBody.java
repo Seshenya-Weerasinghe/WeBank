@@ -1,5 +1,6 @@
 package com.example.WeBank.model;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -23,6 +24,14 @@ public class CustomerRequestBody {
 
     private String accountNumber;
 
+    private Integer creditScore;
+
+    private Double annualIncome;
+
+    private Double debt;
+
+    private Integer yearsOfEmployment;
+
     @Override
     public String toString() {
         return "Customer{" +
@@ -31,7 +40,11 @@ public class CustomerRequestBody {
                 ", lastName=" + lastName +
                 ", dateOfBirth=" + dateOfBirth +
                 ", mobileNumber=" + mobileNumber +
-                ", accountNumber='" + accountNumber + '\'' +
+                ", accountNumber='" + accountNumber +
+                ", creditScore='" + creditScore +
+                ", annualIncome='" + annualIncome +
+                ", debt='" + debt +
+                ", yearsOfEmployment='" + yearsOfEmployment + '\'' +
                 '}';
     }
 
@@ -43,6 +56,10 @@ public class CustomerRequestBody {
         customer.setDateOfBirth(dateOfBirth);
         customer.setMobileNumber(mobileNumber);
         customer.setAccount(account);
+        customer.setCreditScore(creditScore);
+        customer.setAnnualIncome(annualIncome);
+        customer.setDebt(debt);
+        customer.setYearsOfEmployment(yearsOfEmployment);
         return customer;
     }
 }
