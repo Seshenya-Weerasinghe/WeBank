@@ -31,5 +31,21 @@ public class Customer {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_number", referencedColumnName = "account_number",  nullable = false)
     private Account account;
+
+    // Credit score is a number between 300 and 850.
+    @Column(name = "credit_score")
+    private Integer creditScore;
+
+    // Annual income is in dollars.
+    @Column(name = "annual_income")
+    private Double annualIncome;
+
+    // Debt is in dollars.
+    @Column(name = "debt")
+    private Double debt;
+
+    // Years of employment is an integer.
+    @Column(name = "years_of_employment")
+    private Integer yearsOfEmployment;
 }
 

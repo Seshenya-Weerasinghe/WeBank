@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -40,4 +40,69 @@ public class CustomerServiceTest {
         assertEquals(expectedCustomer, createdCustomer);
         verify(customerRepository, times(1)).save(expectedCustomer);
     }
+
+    @Test
+    public void test_IsEligibleForLoan_WithMarginalCreditScore() {
+        // Arrange
+        Customer customer = new Customer();
+        customer.setCreditScore(680); // Below the minimum required credit score
+        customer.setAnnualIncome(70000.0);
+        customer.setDebt(10000.0);
+        customer.setYearsOfEmployment(5);
+
+        // Act
+        boolean isEligible = customerService.isEligibleForLoan(customer);
+
+        // Assert
+        assertFalse(isEligible);
+    }
+
+    @Test
+    public void test_IsEligibleForLoan_WithHighCreditScore() {
+        // Arrange
+        Customer customer = new Customer();
+        customer.setCreditScore(800); // Above the minimum required credit score
+        customer.setAnnualIncome(70000.0);
+        customer.setDebt(10000.0);
+        customer.setYearsOfEmployment(5);
+
+        // Act
+        boolean isEligible = customerService.isEligibleForLoan(customer);
+
+        // Assert
+        assertTrue(isEligible);
+    }
+
+    @Test
+    public void test_IsEligibleForLoan_WithHighDebtToIncomeRatio() {
+        // Arrange
+        Customer customer = new Customer();
+        customer.setCreditScore(720);
+        customer.setAnnualIncome(80000.0);
+        customer.setDebt(40000.0); // High debt relative to income
+        customer.setYearsOfEmployment(7);
+
+        // Act
+        boolean isEligible = customerService.isEligibleForLoan(customer);
+
+        // Assert
+        assertFalse(isEligible);
+    }
+
+    @Test
+    public void test_IsEligibleForLoan_WithInsufficientEmploymentHistory() {
+        // Arrange
+        Customer customer = new Customer();
+        customer.setCreditScore(720);
+        customer.setAnnualIncome(70000.0);
+        customer.setDebt(10000.0);
+        customer.setYearsOfEmployment(1); // Insufficient employment history
+
+        // Act
+        boolean isEligible = customerService.isEligibleForLoan(customer);
+
+        // Assert
+        assertFalse(isEligible);
+    }
+
 }
